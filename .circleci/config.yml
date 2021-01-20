@@ -142,9 +142,11 @@ jobs:
 
   configure-infrastructure:
     docker:
-      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["db:7e:2c:16:99:44:b3:53:39:8a:0c:bb:05:1d:8a:8a"]
       # Add ssh keys with fingerprint
       # attach workspace
       - run:
@@ -161,7 +163,7 @@ jobs:
 
   run-migrations:
     docker:
-      # Docker image here that supports NodeJS
+      - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
       - run:
@@ -178,7 +180,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
     steps:
       # Checkout code from git
       - run:
@@ -199,7 +201,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
