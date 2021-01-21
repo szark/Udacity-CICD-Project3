@@ -32,6 +32,9 @@ commands:
             #  Add revert code here. You can find this in the Getting Started section.
               exit 1
             fi
+
+orbs:
+  slack: circleci/slack@4.1
             
 jobs:
   build-frontend:
@@ -109,6 +112,11 @@ jobs:
           command: |
             cd frontend
             npm audit 
+      - slack/notify:
+          event: fail
+          mentions: '@Łukasz Starsiak'
+          template: basic_fail_1
+
 
 
   scan-backend:
