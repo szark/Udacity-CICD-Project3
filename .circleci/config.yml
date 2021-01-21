@@ -76,7 +76,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend_build]
+          keys: [frontend-build]
       - run: npm run test
                 
   test-backend:
@@ -85,7 +85,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend_build]
+          keys: [backend-build]
       - run: npm run test
             
   scan-frontend:
@@ -94,7 +94,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend_build]
+          keys: [frontend-build]
       - run: npm audit
 
   scan-backend:
@@ -103,7 +103,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend_build]
+          keys: [backend-build]
       - run: npm audit
 
   deploy-infrastructure:
