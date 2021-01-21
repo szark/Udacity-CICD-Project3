@@ -110,11 +110,15 @@ jobs:
       - run: 
           name: Frontend audit
           command: |
-            exit 1
+            cd frontend
+            npm audit fix --audit-level=critical --force
       - slack/notify:
           event: fail
           mentions: '@szark'
           template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
 
 
