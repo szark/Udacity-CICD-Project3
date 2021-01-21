@@ -113,7 +113,7 @@ jobs:
             exit 1
       - slack/notify:
           event: fail
-          mentions: '@Łukasz Starsiak'
+          mentions: '@szark'
           template: basic_fail_1
 
 
