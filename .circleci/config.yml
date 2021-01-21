@@ -110,8 +110,7 @@ jobs:
       - run: 
           name: Frontend audit
           command: |
-            cd frontend
-            npm audit 
+            exit 1
       - slack/notify:
           event: fail
           mentions: '@Łukasz Starsiak'
