@@ -4,14 +4,16 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      swid:
+        type: string 
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name backend-${CIRCLE_WORKFLOW_ID:0:7} \
-            && aws cloudformation delete-stack --stack-name frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name backend-<< parameters.swid >> \
+            && aws cloudformation delete-stack --stack-name frontend-<< parameters.swid >>
 
 
   revert-migrations:
@@ -174,7 +176,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
+      - destroy-environment     
 
   configure-infrastructure:
     docker:
@@ -195,18 +197,22 @@ jobs:
           command: |
             # Your code here
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
-      # Here's where you will add some code to rollback on failure      
+      - destroy-environment    
 
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      # Checkout code from git
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Run migrations
           command: |
-            # Your code here
-            exit 1
+            cd backend
+            echo "Running migrations"
+            npm run migrations > migrations.o
+            cat migrations.o
       - run:
           name: Send migration results to memstash
           command: |
