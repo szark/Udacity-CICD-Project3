@@ -165,11 +165,11 @@ jobs:
             --filters "Name=tag:project,Values=udapeople" \
             --output text >> ./.circleci/ansible/inventory.txt
 
-      -run:
+      - run:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-            
+
       - persist_to_workspace:
           root: ~/
           paths:
