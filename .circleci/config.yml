@@ -163,7 +163,7 @@ jobs:
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
-            --output text >> ./.circleci/ansible/inventory.txt
+            --output text >> ~/project/.circleci/ansible/inventory.txt
 
       - run:
           name: Install dependencies
@@ -184,7 +184,8 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["a0:df:4e:02:dd:2d:e8:c1:44:f2:70:9d:23:e3:a4:cd"]
       # Add ssh keys with fingerprint
-      # attach workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
