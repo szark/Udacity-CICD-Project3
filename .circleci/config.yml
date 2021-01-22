@@ -182,19 +182,18 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["db:7e:2c:16:99:44:b3:53:39:8a:0c:bb:05:1d:8a:8a"]
+          fingerprints: ["a0:df:4e:02:dd:2d:e8:c1:44:f2:70:9d:23:e3:a4:cd"]
       # Add ssh keys with fingerprint
       # attach workspace
       - run:
           name: Install dependencies
           command: |
-            # Your code here
-            exit 1
+            apk add --update ansible
       - run:
           name: Configure server
           command: |
             # Your code here
-            exit 1
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure      
 
   run-migrations:
@@ -314,8 +313,8 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
+#      - build-frontend
+#      - build-backend
       - test-frontend:
           requires: [build-frontend]
       - test-backend:
@@ -325,7 +324,7 @@ workflows:
       - scan-frontend:
           requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+#          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [test-feature-branch]
