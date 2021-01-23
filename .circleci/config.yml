@@ -250,6 +250,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
             yum -y install nodejs
       - run:
           name: Get backend url
@@ -287,6 +288,7 @@ jobs:
           name: Deploy backend
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
+          no_output_timeout: 30m
       #- destroy-environment
       #- revert-environment
 
