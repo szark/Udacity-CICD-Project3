@@ -237,9 +237,9 @@ jobs:
             # Your code here
             value=$(cat backend/migrations.o)
             echo $value
-            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW}" --request PUT --data "$value" https://api.memstash.io/values/
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW}" --request PUT --data "$value" https://api.memstash.io/values/mig
             sleep 10
-            curl -H "token: ${CIRCLE_WORKFLOW}" --request GET https://api.memstash.io/values/
+            curl -H "token: ${CIRCLE_WORKFLOW}" --request GET https://api.memstash.io/values/mig
       #- revert-migrations  
 
   deploy-frontend:
