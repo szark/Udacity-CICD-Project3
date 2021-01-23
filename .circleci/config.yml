@@ -23,15 +23,15 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS = ${curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/mig}
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
+            cd ~/project/backend
+            npm install
+            npm run migrations:revert
               exit 1
             fi
 
@@ -229,18 +229,13 @@ jobs:
             cd backend
             echo "Running migrations"
             npm run migrations 
-            echo $? > migrations.o
-            cat migrations.o
       - run:
           name: Send migration results to memstash
           command: |
-            # Your code here
-            value=$(cat backend/migrations.o)
-            echo $value
-            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "$value" https://api.memstash.io/values/mig
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "1" https://api.memstash.io/values/mig
             sleep 10
             curl -H "token: ${CIRCLE_WORKFLOW_ID}" --request GET https://api.memstash.io/values/mig
-      #- revert-migrations  
+      - revert-migrations  
 
   deploy-frontend:
     docker:
@@ -267,9 +262,9 @@ jobs:
             cd frontend
             npm install
             npm run build
-            aws s3 sync --recursive dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
-      #- destroy-environment
-      #- revert-environment
+            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment
+      - revert-environment
                     
   deploy-backend:
     docker:
@@ -289,8 +284,8 @@ jobs:
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
           no_output_timeout: 30m
-      #- destroy-environment
-      #- revert-environment
+      - destroy-environment
+      - revert-environment
 
   smoke-test:
     docker:
