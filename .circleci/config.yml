@@ -254,7 +254,10 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            # your code here
+            BACKEND_IP=`aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=udapeople" \
+            --output text`
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
@@ -274,6 +277,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["a0:df:4e:02:dd:2d:e8:c1:44:f2:70:9d:23:e3:a4:cd"]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -289,23 +294,36 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      # Checkout code from git
+      - checkout
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            apk add --update curl
       - run:
           name: Get backend url
           command: |
-            # your code here
+            export BACKEND_IP=`tail -1 ~/project/.circleci/ansible/inventory.txt`
       - run:
           name: Backend smoke test.
           command: |
-            # your code here
+            if curl -s https://${BACKEND_IP}:3000/api/status
+            then
+              return 1
+            else
+              return 0
+            fi
       - run:
           name: Frontend smoke test.
           command: |
-            # your code here
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3-website-us-west-2.amazonaws.com"
+            if curl -s ${URL} | grep "Welcome"
+            then
+              return 1
+            else
+              return 0
+            fi
       # Here's where you will add some code to rollback on failure  #
 
   cloudfront-update:
