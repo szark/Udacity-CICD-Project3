@@ -211,14 +211,18 @@ jobs:
           command: |
             cd backend
             echo "Running migrations"
-            npm run migrations > migrations.o
+            npm run migrations 
+            echo $? > migrations.o
             cat migrations.o
       - run:
           name: Send migration results to memstash
           command: |
             # Your code here
-            exit 1
-      - destroy-environment   
+            value=$(cat backend/migrations.o)
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW}" --request PUT --data "$value" https://api.memstash.io/values/
+            sleep 10
+            curl -H "token: ${CIRCLE_WORKFLOW}" --request GET https://api.memstash.io/values/
+      #- revert-migrations  
 
   deploy-frontend:
     docker:
