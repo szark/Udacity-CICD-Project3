@@ -246,11 +246,11 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
-      # Checkout code from git
+      - checkout
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            yum -y install nodejs
       - run:
           name: Get backend url
           command: |
@@ -260,25 +260,30 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure      
+            cd frontend
+            npm install
+            npm run build
+            aws s3 --recursive dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+      #- destroy-environment
+      #- revert-environment
                     
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-      # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["a0:df:4e:02:dd:2d:e8:c1:44:f2:70:9d:23:e3:a4:cd"]
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            apk add --update ansible
       - run:
           name: Deploy backend
           command: |
-            # your code here
-      # Here's where you will add some code to rollback on failure  
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
+      #- destroy-environment
+      #- revert-environment
 
   smoke-test:
     docker:

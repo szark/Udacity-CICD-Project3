@@ -1,0 +1,17 @@
+---
+- name: Creates web directory
+  file:
+    path: /home/ubuntu/web
+    state: directory
+
+- name: Copy files to destination
+  become: true 
+  copy: 
+    src: ~/project/backend
+    dest: /home/ubuntu/web
+
+- name: Execute node
+  become: true 
+  shell: |
+    cd /home/ubuntu/web
+    pm2 start npm --name backend -- start
