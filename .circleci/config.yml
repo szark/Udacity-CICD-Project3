@@ -254,7 +254,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
             --output text`
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}:3030" # port was 3030
             echo "${API_URL}"
       - run:
           name: Deploy frontend objects
@@ -284,6 +284,11 @@ jobs:
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
           no_output_timeout: 30m
+      - run:
+          name: Install dependencies for rollback
+          when: on_fail
+          command: |
+            apk add --install py3-pip && pip3 install --upgrade pip && pip3 install awscli
       - destroy-environment
       - revert-migrations
 
@@ -298,6 +303,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update curl
+            pip install awscli
       - run:
           name: Get backend url
           command: |
@@ -305,7 +311,7 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            if curl -s https://${BACKEND_IP}:3000/api/status
+            if curl -s https://${BACKEND_IP}:3030/api/status
             then
               return 1
             else
