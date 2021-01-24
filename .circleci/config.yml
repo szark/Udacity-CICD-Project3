@@ -13,8 +13,8 @@ commands:
           when: on_fail
           command: |
             aws s3 rb s3://udapeople-<< parameters.swid >> --force
-            aws cloudformation delete-stack --stack-name backend-<< parameters.swid >> 
-            aws cloudformation delete-stack --stack-name frontend-<< parameters.swid >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.swid >> 
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.swid >>
 
 
   revert-migrations:
