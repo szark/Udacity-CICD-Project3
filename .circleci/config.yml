@@ -143,13 +143,6 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: 
-          name: Check whether any existing backedn exists
-          command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udapeople" \
-            --output text >> ~/project/.circleci/ansible/old_inventory.txt
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -167,12 +160,23 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
       - run:
-          name: Add back-end ip to ansible inventory
+          name: Add back-end ip to ansible inventory and store new IP to memstash
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
+            --output text >> ~/project/.circleci/ansible/old_inventory.txt
+
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=udapeople" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
+
+            cat project/.circleci/ansible/inventory.txt
+            cat project/.circleci/ansible/old_inventory.txt
+            backend=`cat project/.circleci/ansible/inventory.txt | grep -v web |grep -vf project/.circleci/ansible/old_inventory.txt`
+            echo "Backend IP is $backend"
+            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "$backend" https://api.memstash.io/values/backend
 
       - run:
           name: Install dependencies
@@ -184,14 +188,6 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
 
-      - run: 
-          name: Store new backend IP in memstash
-          command: |
-            cat project/.circleci/ansible/inventory.txt
-            cat project/.circleci/ansible/old_inventory.txt
-            backend=`cat project/.circleci/ansible/inventory.txt | grep -v web |grep -vf project/.circleci/ansible/old_inventory.txt`
-            echo "Backend IP is $backend"
-            curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "$backend" https://api.memstash.io/values/backend
       - destroy-environment     
 
   configure-infrastructure:
