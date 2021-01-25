@@ -23,5 +23,6 @@
 - name: Execute node
   become: true 
   shell: |
-    cd /home/ubuntu/web
+    cd /home/ubuntu/web/backend
+    npm i
     pm2 start npm --name backend -- start
