@@ -172,9 +172,9 @@ jobs:
             --filters "Name=tag:project,Values=udapeople" \
             --output text >> ~/project/.circleci/ansible/inventory.txt
 
-            cat project/.circleci/ansible/inventory.txt
-            cat project/.circleci/ansible/old_inventory.txt
-            backend=`cat project/.circleci/ansible/inventory.txt | grep -v web |grep -vf project/.circleci/ansible/old_inventory.txt`
+            cat ~/project/.circleci/ansible/inventory.txt
+            cat ~/project/.circleci/ansible/old_inventory.txt
+            backend=`cat ~/project/.circleci/ansible/inventory.txt | grep -v web |grep -vf ~/project/.circleci/ansible/old_inventory.txt`
             echo "Backend IP is $backend"
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "$backend" https://api.memstash.io/values/backend
 
