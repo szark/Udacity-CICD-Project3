@@ -143,6 +143,13 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: 
+          name: Get already created backend IPs
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=udapeople" \
+            --output text >> ~/project/.circleci/ansible/old_inventory.txt
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -162,11 +169,6 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory and store new IP to memstash
           command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udapeople" \
-            --output text >> ~/project/.circleci/ansible/old_inventory.txt
-
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
