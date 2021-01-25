@@ -284,6 +284,7 @@ jobs:
       - run:
           name: Deploy backend
           command: |
+            tar -cvf backend.tar backend
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
           no_output_timeout: 30m
       - run:
