@@ -146,7 +146,7 @@ jobs:
       - run: 
           name: Check whether any existing backedn exists
           command: |
-              aws ec2 describe-instances \
+            aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
             --output text >> ~/project/.circleci/ansible/old_inventory.txt
