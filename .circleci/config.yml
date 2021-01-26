@@ -429,11 +429,11 @@ workflows:
   default:
     jobs:
       - build-frontend
-        filters:
+          filters:
             branches:
               only: [main]
       - build-backend
-        filters:
+          filters:
             branches:
               only: [main]
       - test-frontend:
