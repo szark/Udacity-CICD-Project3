@@ -376,6 +376,7 @@ jobs:
 
             echo "Old Workflow ID is ${OldWorkflowID}"
             curl -H "Content-Type: text/plain" -H "token: ${CIRCLE_WORKFLOW_ID}" --request PUT --data "${OldWorkflowID}" https://api.memstash.io/values/oldworkflowid
+            echo "STACKS is ${STACKS[@]}"
       - run:
           name: Update cloudfront distribution
           command: |
@@ -404,7 +405,7 @@ jobs:
             --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
 
             echo "Old Workflow ID is ${OldWorkflowID}"
-            echo "STACKS is ${STACKS}"
+            echo "STACKS is ${STACKS[@]}"
       - run:
           name: Remove old stacks and files
           command: |
