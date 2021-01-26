@@ -428,11 +428,11 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      - build-frontend:
           filters:
             branches:
               only: [main]
-      - build-backend
+      - build-backend:
           filters:
             branches:
               only: [main]
