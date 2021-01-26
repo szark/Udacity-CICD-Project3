@@ -24,7 +24,7 @@
 - name: Install the nodejs LTS repos
   become: yes
   apt_repository:
-    repo: "deb https://deb.nodesource.com/node_14.x bionic main"
+    repo: "deb https://deb.nodesource.com/node_14.x focal main"
     state: present
     update_cache: yes
 
