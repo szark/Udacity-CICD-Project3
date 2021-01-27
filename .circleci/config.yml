@@ -310,10 +310,7 @@ jobs:
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> $env
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> $env
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> $env
-            cd backend
-            npm install
-            npm run build
-            tar -cvf dist.tar dist
+            tar -cvf backend.tar backend
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
       - run:
           name: Install dependencies for rollback
