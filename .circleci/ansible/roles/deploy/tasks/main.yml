@@ -6,23 +6,24 @@
     path: /home/ubuntu/web
     state: directory
 
-- name: Copy files
-  become_user: ubuntu
-  become: yes 
-  copy: 
-    src: ~/project/backend/dist.tar
-    dest: /home/ubuntu/web
+#- name: Copy files
+#  become_user: ubuntu
+#  become: yes 
+#  copy: 
+#    src: ~/project/backend.tar
+#    dest: /home/ubuntu/web
 
 - name: Unarchive
   become_user: ubuntu
   become: yes 
   unarchive: 
-    src: ~/project/backend/dist.tar
+    src: ~/project/backend.tar
     dest: /home/ubuntu/web
 
 - name: Execute node
   become: true 
   shell: |
-    cd /home/ubuntu/web/dist
+    cd /home/ubuntu/web/backend
     npm i
-    pm2 start npm --name backend -- start
+    npm run build
+    pm2 start npm -- run  start
