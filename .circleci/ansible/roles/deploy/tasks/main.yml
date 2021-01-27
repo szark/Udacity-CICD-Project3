@@ -10,7 +10,7 @@
   become_user: ubuntu
   become: yes 
   copy: 
-    src: ~/project/backend.tar
+    src: ~/project/backend/dist.tarr
     dest: /home/ubuntu/web
 
 - name: Unarchive
