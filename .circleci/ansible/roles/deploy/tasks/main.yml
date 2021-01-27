@@ -21,7 +21,7 @@
     dest: /home/ubuntu/web
 
 - name: Execute node
-  become: true 
+  become_user: ubuntu
   shell: |
     cd /home/ubuntu/web/backend
     npm i
